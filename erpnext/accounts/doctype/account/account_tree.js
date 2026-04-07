@@ -291,6 +291,129 @@ frappe.treeview_settings["Account"] = {
 			},
 			btnClass: "hidden-xs",
 		},
+		{
+			label: __("Delete"),
+			condition: function (node) {
+				return !node.root && frappe.boot.user.can_delete.indexOf("Account") !== -1;
+			},
+			click: function (node) {
+				// Get related transactions before delete
+				frappe.call({
+					method: "erpnext.accounts.doctype.account.account.get_related_transactions",
+					args: {
+						name: node.label
+					},
+					callback: function (r) {
+						if (!r.exc) {
+							var related_transactions = r.message;
+							var has_related_transactions = related_transactions.gl_entry_count > 0 || related_transactions.transactions.length > 0;
+							
+							if (has_related_transactions) {
+								// Show related transactions dialog
+								var transactions_html = "";
+								
+								// Add GL Entry count
+							if (related_transactions.gl_entry_count > 0) {
+								var today = new Date();
+								var tenYearsAgo = new Date();
+								tenYearsAgo.setFullYear(today.getFullYear() - 10);
+								var tenYearsLater = new Date();
+								tenYearsLater.setFullYear(today.getFullYear() + 10);
+								
+								var tenYearsAgoStr = tenYearsAgo.toISOString().split('T')[0];
+								var tenYearsLaterStr = tenYearsLater.toISOString().split('T')[0];
+								
+								transactions_html += `
+									<div class="form-group">
+										<label class="control-label">总账条目</label>
+										<div class="form-control-static">
+											<a href="/app/query-report/General%20Ledger?account=${encodeURIComponent(node.label)}&from_date=${tenYearsAgoStr}&to_date=${tenYearsLaterStr}&show_cancelled_entries=1" target="_blank" style="color: #337ab7; text-decoration: underline; font-weight: 500;">
+												${related_transactions.gl_entry_count} 条记录
+											</a>
+										</div>
+									</div>
+								`;
+							}
+								
+								// Add other transactions
+								if (related_transactions.transactions.length > 0) {
+									related_transactions.transactions.forEach(function (transaction) {
+										let route = transaction.route;
+										let transaction_type = "";
+										
+										// Add filter for account and translate transaction type
+											if (transaction.type === "Sales Invoice") {
+												route += `?income_account=${encodeURIComponent(node.label)}`;
+												transaction_type = "销售发票";
+											} else if (transaction.type === "Purchase Invoice") {
+												route += `?expense_account=${encodeURIComponent(node.label)}`;
+												transaction_type = "采购发票";
+											} else if (transaction.type === "Journal Entry") {
+												route += `?account=${encodeURIComponent(node.label)}`;
+												transaction_type = "日记账";
+											} else if (transaction.type === "Payment Entry") {
+												route += `?account=${encodeURIComponent(node.label)}`;
+												transaction_type = "付款凭证";
+											} else if (transaction.type === "Payment Ledger Entry") {
+												route += `?account=${encodeURIComponent(node.label)}`;
+												transaction_type = "收付款台账";
+											}
+										
+										transactions_html += `
+											<div class="form-group">
+												<label class="control-label">${transaction_type}</label>
+												<div class="form-control-static">
+													<a href="${route}" target="_blank" style="color: #337ab7; text-decoration: underline; font-weight: 500;">
+														${transaction.count} 条记录
+													</a>
+												</div>
+											</div>
+										`;
+									});
+								}
+								
+								// Create information dialog (no delete button)
+								var d = new frappe.ui.Dialog({
+									title: __("科目关联交易信息"),
+									fields: [
+										{
+											label: __("科目"),
+											fieldname: "account",
+											fieldtype: "Data",
+											default: node.label,
+											read_only: 1
+										},
+										{
+											label: __("关联交易"),
+											fieldname: "related_transactions",
+											fieldtype: "HTML",
+											options: transactions_html
+										},
+										{
+											label: __("该科目存在关联交易，无法删除。请点击上方链接查看详细信息。"),
+											fieldname: "message",
+											fieldtype: "HTML",
+											options: "<div class='alert alert-warning' style='margin-top: 15px;'>该科目存在关联交易，无法删除。请点击上方链接查看详细信息。</div>"
+										}
+									],
+									primary_action_label: __("关闭"),
+									primary_action: function () {
+										d.hide();
+									}
+								});
+								d.show();
+							} else {
+								// No related transactions, proceed with normal delete
+								frappe.model.delete_doc("Account", node.label, function () {
+									node.parent.remove();
+								});
+							}
+						}
+					}
+				});
+			},
+			btnClass: "hidden-xs",
+		},
 	],
 	extend_toolbar: true,
 };

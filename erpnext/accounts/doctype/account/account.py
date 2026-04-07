@@ -468,6 +468,111 @@ class Account(NestedSet):
 
 		super().on_trash(True)
 
+@frappe.whitelist()
+def get_related_transactions(name):
+	"""Get related transactions for this account"""
+	# Get company from account
+	company = frappe.db.get_value("Account", name, "company")
+	if not company:
+		return {"gl_entry_count": 0, "transactions": []}
+	
+	# Get GL Entry count - same as report filter with date range (10 years ago to 10 years later)
+	from datetime import date
+	from dateutil.relativedelta import relativedelta
+	
+	today = date.today()
+	ten_years_ago = today - relativedelta(years=10)
+	ten_years_later = today + relativedelta(years=10)
+	
+	gl_entry_count = frappe.db.sql("""
+		SELECT COUNT(*)
+		FROM `tabGL Entry`
+		WHERE account = %s
+		AND posting_date >= %s AND posting_date <= %s
+	""", (name, ten_years_ago, ten_years_later))[0][0]
+	
+	# Get other related transactions
+	transactions = []
+	
+	# Check for Sales Invoice
+	sales_invoice_with_account = frappe.db.sql("""
+		SELECT COUNT(DISTINCT si.name) 
+		FROM `tabSales Invoice` si
+		JOIN `tabSales Invoice Item` sii ON si.name = sii.parent
+		WHERE sii.income_account = %s
+	""", (name,))[0][0]
+	
+	if sales_invoice_with_account > 0:
+		transactions.append({
+			"type": "Sales Invoice",
+			"count": sales_invoice_with_account,
+			"route": "/app/sales-invoice"
+		})
+	
+	# Check for Purchase Invoice
+	purchase_invoice_with_account = frappe.db.sql("""
+		SELECT COUNT(DISTINCT pi.name) 
+		FROM `tabPurchase Invoice` pi
+		JOIN `tabPurchase Invoice Item` pii ON pi.name = pii.parent
+		WHERE pii.expense_account = %s
+	""", (name,))[0][0]
+	
+	if purchase_invoice_with_account > 0:
+		transactions.append({
+			"type": "Purchase Invoice",
+			"count": purchase_invoice_with_account,
+			"route": "/app/purchase-invoice"
+		})
+	
+	# Check for Journal Entry
+	journal_entry_with_account = frappe.db.sql("""
+		SELECT COUNT(DISTINCT je.name) 
+		FROM `tabJournal Entry` je
+		JOIN `tabJournal Entry Account` jea ON je.name = jea.parent
+		WHERE jea.account = %s
+	""", (name,))[0][0]
+	
+	if journal_entry_with_account > 0:
+		transactions.append({
+			"type": "Journal Entry",
+			"count": journal_entry_with_account,
+			"route": "/app/journal-entry"
+		})
+	
+	# Check for Payment Entry
+	payment_entry_with_account = frappe.db.sql("""
+		SELECT COUNT(DISTINCT pe.name) 
+		FROM `tabPayment Entry` pe
+		JOIN `tabPayment Entry Reference` per ON pe.name = per.parent
+		WHERE per.account = %s
+	""", (name,))[0][0]
+	
+	if payment_entry_with_account > 0:
+		transactions.append({
+			"type": "Payment Entry",
+			"count": payment_entry_with_account,
+			"route": "/app/payment-entry"
+		})
+	
+	# Check for Payment Ledger Entry
+	payment_ledger_entry_count = frappe.db.sql("""
+		SELECT COUNT(DISTINCT ple.name) 
+		FROM `tabPayment Ledger Entry` ple
+		WHERE ple.account = %s
+	""", (name,))[0][0]
+	
+	if payment_ledger_entry_count > 0:
+		transactions.append({
+			"type": "Payment Ledger Entry",
+			"count": payment_ledger_entry_count,
+			"route": "/app/payment-ledger-entry"
+		})
+	
+	return {
+		"gl_entry_count": gl_entry_count,
+		"transactions": transactions
+	}
+
 
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
