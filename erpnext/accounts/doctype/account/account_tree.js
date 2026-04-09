@@ -343,17 +343,17 @@ frappe.treeview_settings["Account"] = {
 										
 										// Add filter for account and translate transaction type
 											if (transaction.type === "Sales Invoice") {
-												route += `?income_account=${encodeURIComponent(node.label)}`;
+												route += `?debit_to=${encodeURIComponent(node.label)}`;
 												transaction_type = "销售发票";
 											} else if (transaction.type === "Purchase Invoice") {
-												route += `?expense_account=${encodeURIComponent(node.label)}`;
+												route += `?credit_to=${encodeURIComponent(node.label)}`;
 												transaction_type = "采购发票";
 											} else if (transaction.type === "Journal Entry") {
 												route += `?account=${encodeURIComponent(node.label)}`;
 												transaction_type = "日记账";
 											} else if (transaction.type === "Payment Entry") {
 												route += `?account=${encodeURIComponent(node.label)}`;
-												transaction_type = "付款凭证";
+												transaction_type = "收付款凭证";
 											} else if (transaction.type === "Payment Ledger Entry") {
 												route += `?account=${encodeURIComponent(node.label)}`;
 												transaction_type = "收付款台账";

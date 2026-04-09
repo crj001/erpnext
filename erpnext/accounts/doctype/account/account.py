@@ -498,8 +498,7 @@ def get_related_transactions(name):
 	sales_invoice_with_account = frappe.db.sql("""
 		SELECT COUNT(DISTINCT si.name) 
 		FROM `tabSales Invoice` si
-		JOIN `tabSales Invoice Item` sii ON si.name = sii.parent
-		WHERE sii.income_account = %s
+		WHERE si.debit_to = %s
 	""", (name,))[0][0]
 	
 	if sales_invoice_with_account > 0:
@@ -513,8 +512,7 @@ def get_related_transactions(name):
 	purchase_invoice_with_account = frappe.db.sql("""
 		SELECT COUNT(DISTINCT pi.name) 
 		FROM `tabPurchase Invoice` pi
-		JOIN `tabPurchase Invoice Item` pii ON pi.name = pii.parent
-		WHERE pii.expense_account = %s
+		WHERE pi.credit_to = %s
 	""", (name,))[0][0]
 	
 	if purchase_invoice_with_account > 0:
