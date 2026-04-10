@@ -898,16 +898,24 @@ class StockEntry(StockController, SubcontractingInwardController):
 			production_item, qty = frappe.db.get_value(
 				"Work Order", self.work_order, ["production_item", "qty"]
 			)
+
+			# 获取超产百分比
+			allowance_percentage = flt(
+				frappe.db.get_single_value("Manufacturing Settings", "overproduction_percentage_for_work_order")
+			)
+			# 计算允许的最大入库数量
+			max_allowed_qty = qty + (allowance_percentage / 100 * qty)
+
 			args = [*other_ste, production_item]
 			fg_qty_already_entered = frappe.db.sql(
 				"""select sum(transfer_qty)
 				from `tabStock Entry Detail`
 				where parent in ({})
 					and item_code = {}
-					and ifnull(s_warehouse,'')='' """.format(", ".join(["%s" * len(other_ste)]), "%s"),
+					and ifnull(s_warehouse,'')='' """.format(", ".join(["%s"] * len(other_ste)), "%s"),
 				args,
 			)[0][0]
-			if fg_qty_already_entered and fg_qty_already_entered >= qty:
+			if fg_qty_already_entered and fg_qty_already_entered >= max_allowed_qty:
 				frappe.throw(
 					_("Stock Entries already created for Work Order {0}: {1}").format(
 						self.work_order, ", ".join(other_ste)
