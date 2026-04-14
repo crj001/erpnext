@@ -908,6 +908,75 @@ frappe.ui.form.on("Stock Entry", {
 
 		frm.set_value("fg_completed_qty", fg_completed_qty);
 	},
+
+	onload_post_render: function(frm) {
+		// 为物料列表"发料仓"列添加鼠标悬停事件
+		$(document.body).on("mouseover", '[data-fieldname="s_warehouse"] a[data-doctype], [data-fieldname="s_warehouse"] input[data-fieldtype="Link"], .popover', function(e) {
+			frm.sWarehouseHovered = true;
+			let $this = $(this);
+			let row = $this.closest(".grid-row");
+			let row_idx = row.attr("data-idx");
+			let item = frm.doc.items[row_idx - 1];
+			let element = $(e.currentTarget);
+			
+			if (item && item.item_code && item.s_warehouse) {
+				if (frm.sWarehousePopTimeout) {
+					clearTimeout(frm.sWarehousePopTimeout);
+				}
+				frm.sWarehousePopTimeout = setTimeout(() => {
+					// 查询库存信息
+					frappe.call({
+						method: "erpnext.stock.doctype.stock_entry.stock_entry.get_warehouse_details",
+						args: {
+							args: {
+								item_code: item.item_code,
+								warehouse: item.s_warehouse,
+								posting_date: frm.doc.posting_date,
+								posting_time: frm.doc.posting_time,
+								company: frm.doc.company,
+								allow_zero_valuation: 1
+							}
+						},
+						callback: function(r) {
+							if (r.message) {
+								let stock_info = `
+									<div style="padding: 10px; min-width: 200px;">
+										<div style="font-weight: bold; margin-bottom: 5px;">库存信息</div>
+										<div>物料: ${item.item_code}</div>
+										<div>仓库: ${item.s_warehouse}</div>
+										<div>可用数量: ${r.message.actual_qty || 0}</div>
+									</div>
+								`;
+								
+								element.popover("hide");
+								element.popover({
+									container: "body",
+									html: true,
+									sanitizeFn: (content) => content,
+									content: stock_info,
+									trigger: "manual",
+									placement: "top",
+								});
+								element.popover("show");
+							}
+						}
+					});
+				}, 1000);
+			}
+		});
+		
+		$(document).on("mouseout", '[data-fieldname="s_warehouse"] a[data-doctype], [data-fieldname="s_warehouse"] input[data-fieldtype="Link"], .popover', function(e) {
+			if (!$(".popover:hover").length) {
+				frm.sWarehouseHovered = false;
+			} 
+			if (!frm.sWarehouseHovered) {
+				clearTimeout(frm.sWarehousePopTimeout);
+
+				let element = $(e.currentTarget);
+				element.popover("hide");
+			}
+		});
+    },
 });
 
 frappe.ui.form.on("Stock Entry Detail", {
