@@ -924,6 +924,9 @@ frappe.ui.form.on("Stock Entry", {
 					clearTimeout(frm.sWarehousePopTimeout);
 				}
 				frm.sWarehousePopTimeout = setTimeout(() => {
+					var now = new Date();
+					var posting_date = now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate();
+					var posting_time = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
 					// 查询库存信息
 					frappe.call({
 						method: "erpnext.stock.doctype.stock_entry.stock_entry.get_warehouse_details",
@@ -931,8 +934,8 @@ frappe.ui.form.on("Stock Entry", {
 							args: {
 								item_code: item.item_code,
 								warehouse: item.s_warehouse,
-								posting_date: frm.doc.posting_date,
-								posting_time: frm.doc.posting_time,
+								posting_date: posting_date,
+								posting_time: posting_time,
 								company: frm.doc.company,
 								allow_zero_valuation: 1
 							}
