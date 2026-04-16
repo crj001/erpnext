@@ -951,7 +951,7 @@ frappe.ui.form.on("Stock Entry", {
 									</div>
 								`;
 								
-								element.popover("hide");
+								element.popover("dispose");
 								element.popover({
 									container: "body",
 									html: true,

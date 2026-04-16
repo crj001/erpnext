@@ -155,6 +155,78 @@ frappe.ui.form.on("Purchase Receipt", {
 		var enabled = erpnext.is_perpetual_inventory_enabled(frm.doc.company);
 		frm.fields_dict["items"].grid.set_column_disp(["cost_center"], enabled);
 	},
+
+	onload_post_render: function(frm) {
+		// 为物料列表"仓库"列添加鼠标悬停事件
+		$(document.body).on("mouseover", '[data-fieldname="warehouse"] a[data-doctype], [data-fieldname="warehouse"] input[data-fieldtype="Link"], .popover', function(e) {
+			frm.warehouseHovered = true;
+			let $this = $(this);
+			let row = $this.closest(".grid-row");
+			let row_idx = row.attr("data-idx");
+			let item = frm.doc.items[row_idx - 1];
+			let element = $(e.currentTarget);
+			
+			if (item && item.item_code && item.warehouse) {
+				if (frm.warehousePopTimeout) {
+					clearTimeout(frm.warehousePopTimeout);
+				}
+				frm.warehousePopTimeout = setTimeout(() => {
+					var now = new Date();
+					var posting_date = now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate();
+					var posting_time = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+					// 查询库存信息
+					frappe.call({
+						method: "erpnext.stock.doctype.stock_entry.stock_entry.get_warehouse_details",
+						args: {
+							args: {
+								item_code: item.item_code,
+								warehouse: item.warehouse,
+								posting_date: posting_date,
+								posting_time: posting_time,
+								company: frm.doc.company,
+								allow_zero_valuation: 1
+							}
+						},
+						callback: function(r) {
+							if (r.message) {
+								let stock_info = `
+									<div style="padding: 10px; min-width: 200px;">
+										<div style="font-weight: bold; margin-bottom: 5px;">库存信息</div>
+										<div>物料: ${item.item_code}</div>
+										<div>仓库: ${item.warehouse}</div>
+										<div>可用数量: ${r.message.actual_qty || 0}</div>
+									</div>
+								`;
+								
+								element.popover("dispose");
+								element.popover({
+									container: "body",
+									html: true,
+									sanitizeFn: (content) => content,
+									content: stock_info,
+									trigger: "manual",
+									placement: "top",
+								});
+								element.popover("show");
+							}
+						}
+					});
+				}, 1000);
+			}
+		});
+		
+		$(document).on("mouseout", '[data-fieldname="warehouse"] a[data-doctype], [data-fieldname="warehouse"] input[data-fieldtype="Link"], .popover', function(e) {
+			if (!$(".popover:hover").length) {
+				frm.warehouseHovered = false;
+			} 
+			if (!frm.warehouseHovered) {
+				clearTimeout(frm.warehousePopTimeout);
+
+				let element = $(e.currentTarget);
+				element.popover("hide");
+			}
+		});
+    },
 });
 
 erpnext.stock.PurchaseReceiptController = class PurchaseReceiptController extends (
