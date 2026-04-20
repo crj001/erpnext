@@ -93,9 +93,21 @@ frappe.query_reports["Stock Ledger"] = {
 			options: "Brand",
 		},
 		{
+			fieldname: "voucher_type",
+			label: __("Voucher Type"),
+			fieldtype: "Select",
+			options: "\nStock Entry\nPurchase Receipt\nDelivery Note\nStock Reconciliation\nSales Invoice\nPurchase Invoice\nSubcontracting Receipt\nManufacture\nMaterial Request\nPick List\nLanded Cost Voucher",
+		},
+		{
 			fieldname: "voucher_no",
 			label: __("Voucher #"),
 			fieldtype: "Data",
+		},
+		{
+			fieldname: "stock_entry_type",
+			label: __("Stock Entry Type"),
+			fieldtype: "Link",
+			options: "Stock Entry Type",
 		},
 		{
 			fieldname: "project",

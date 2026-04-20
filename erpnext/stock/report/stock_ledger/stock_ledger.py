@@ -473,9 +473,26 @@ def get_stock_ledger_entries(filters, items):
 	if items:
 		query = query.where(sle.item_code.isin(items))
 
-	for field in ["voucher_no", "project", "company"]:
+	for field in ["voucher_no", "project", "company", "voucher_type"]:
 		if filters.get(field) and field not in inventory_dimension_fields:
 			query = query.where(sle[field] == filters.get(field))
+
+	if filters.get("stock_entry_type"):
+		voucher_type = filters.get("voucher_type")
+		if voucher_type and voucher_type != "Stock Entry":
+			query = query.where(sle.voucher_no == "__empty_result__")
+		else:
+			if not voucher_type:
+				query = query.where(sle.voucher_type == "Stock Entry")
+			stock_entries = frappe.get_all(
+				"Stock Entry",
+				filters={"stock_entry_type": filters.stock_entry_type},
+				pluck="name"
+			)
+			if stock_entries:
+				query = query.where(sle.voucher_no.isin(stock_entries))
+			else:
+				query = query.where(sle.voucher_no == "__empty_result__")
 
 	if filters.get("batch_no"):
 		bundles = get_serial_and_batch_bundles(filters)
