@@ -1,0 +1,632 @@
+{
+    "country_code": "cn", 
+    "name": "中国新会计准则模板", 
+	"tree": {
+		"流动资产": {
+			"account_number": "PRE01",
+			"root_type": "Asset",
+			"库存现金": {
+				"account_number": "1001"
+			},
+			"银行存款": {
+				"account_number": "1002"
+			},
+			"其他货币资金": {
+				"account_number": "1012"
+			},
+			"交易性金融资产": {
+				"account_number": "1101"
+			},
+			"应收票据": {
+				"account_number": "1121"
+			},
+			"应收账款": {
+				"account_number": "1122"
+			},
+			"预付账款": {
+				"account_number": "1123"
+			},
+			"应收股利": {
+				"account_number": "1131"
+			},
+			"应收利息": {
+				"account_number": "1132"
+			},
+			"其他应收款": {
+				"account_number": "1221",
+				"客户往来": {
+					"account_number": "1221.01"
+				},
+				"供应商往来": {
+					"account_number": "1221.02"
+				},
+				"员工往来": {
+					"account_number": "1221.03"
+				},
+				"统收款": {
+					"account_number": "1221.04"
+				},
+				"社保费-个人": {
+					"account_number": "1221.05"
+				}
+			},
+			"坏账准备": {
+				"account_number": "1231"
+			},
+			"代理业务资产": {
+				"account_number": "1321"
+			},
+			"材料采购": {
+				"account_number": "1401"
+			},
+			"在途物资": {
+				"account_number": "1402"
+			},
+			"原材料": {
+				"account_number": "1403"
+			},
+			"材料成本差异": {
+				"account_number": "1404"
+			},
+			"库存商品": {
+				"account_number": "1405",
+				"原材料": {
+					"account_number": "1405.01"
+				},
+				"成品": {
+					"account_number": "1405.02"
+				},
+				"设备": {
+					"account_number": "1405.03"
+				},
+				"办公用品": {
+					"account_number": "1405.04"
+				},
+				"在途": {
+					"account_number": "1405.05"
+				},
+				"工具": {
+					"account_number": "1405.06"
+				},
+				"暂估资产": {
+					"account_number": "1405.07"
+				}
+			},
+			"发出商品": {
+				"account_number": "1406"
+			},
+			"商品进销差价": {
+				"account_number": "1407"
+			},
+			"委托加工物资": {
+				"account_number": "1408"
+			},
+			"周转材料": {
+				"account_number": "1411"
+			},
+			"合同资产": {
+				"account_number": "1462"
+			},
+			"合同资产减值准备": {
+				"account_number": "1463"
+			},
+			"合同履约成本": {
+				"account_number": "1464"
+			},
+			"合同履约成本减值准备": {
+				"account_number": "1465"
+			},
+			"合同取得成本": {
+				"account_number": "1466"
+			},
+			"合同取得成本减值准备": {
+				"account_number": "1467"
+			},
+			"存货跌价准备": {
+				"account_number": "1471"
+			},
+			"持有待售资产": {
+				"account_number": "1481"
+			},
+			"持有待售资产减值准备": {
+				"account_number": "1482"
+			},
+			"应收退货成本": {
+				"account_number": "1485"
+			}
+		},
+		"非流动资产": {
+			"account_number": "PRE02",
+			"root_type": "Asset",
+			"债权投资": {
+				"account_number": "1501"
+			},
+			"债权投资减值准备": {
+				"account_number": "1502"
+			},
+			"其他债权投资": {
+				"account_number": "1503"
+			},
+			"其他权益工具投资": {
+				"account_number": "1504"
+			},
+			"长期股权投资": {
+				"account_number": "1511"
+			},
+			"长期股权投资减值准备": {
+				"account_number": "1512"
+			},
+			"投资性房地产": {
+				"account_number": "1521"
+			},
+			"长期应收款": {
+				"account_number": "1531"
+			},
+			"未实现融资收益": {
+				"account_number": "1532"
+			},
+			"固定资产": {
+				"account_number": "1601",
+				"生产设备": {
+					"account_number": "1601.01"
+				},
+				"办公设备": {
+					"account_number": "1601.02"
+				}
+			},
+			"累计折旧": {
+				"account_number": "1602"
+			},
+			"固定资产减值准备": {
+				"account_number": "1603"
+			},
+			"在建工程": {
+				"account_number": "1604"
+			},
+			"工程物资": {
+				"account_number": "1605"
+			},
+			"固定资产清理": {
+				"account_number": "1606"
+			},
+			"生产性生物资产": {
+				"account_number": "1621"
+			},
+			"生产性生物资产累计折旧": {
+				"account_number": "1622"
+			},
+			"公益性生物资产": {
+				"account_number": "1623"
+			},
+			"油气资产": {
+				"account_number": "1631"
+			},
+			"累计折耗": {
+				"account_number": "1632"
+			},
+			"使用权资产": {
+				"account_number": "1641"
+			},
+			"使用权资产累计折旧": {
+				"account_number": "1642"
+			},
+			"使用权资产减值准备": {
+				"account_number": "1643"
+			},
+			"无形资产": {
+				"account_number": "1701",
+				"专利权": {
+					"account_number": "1701.01"
+				},
+				"软件系统": {
+					"account_number": "1701.02"
+				}
+			},
+			"累计摊销": {
+				"account_number": "1702"
+			},
+			"无形资产减值准备": {
+				"account_number": "1703"
+			},
+			"商誉": {
+				"account_number": "1711"
+			},
+			"长期待摊费用": {
+				"account_number": "1801"
+			},
+			"递延所得税资产": {
+				"account_number": "1811"
+			},
+			"待处理财产损溢": {
+				"account_number": "1901"
+			}
+		},
+		"流动负债": {
+			"account_number": "PRE03",
+			"root_type": "Liability",
+			"短期借款": {
+				"account_number": "2001"
+			},
+			"交易性金融负债": {
+				"account_number": "2101"
+			},
+			"应付票据": {
+				"account_number": "2201"
+			},
+			"应付账款": {
+				"account_number": "2202",
+				"暂估应付款": {
+					"account_number": "2202.01"
+				},
+				"明细应付款": {
+					"account_number": "2202.02"
+				}
+			},
+			"预收账款": {
+				"account_number": "2203"
+			},
+			"合同负债": {
+				"account_number": "2204"
+			},
+			"应付职工薪酬": {
+				"account_number": "2211",
+				"应付工资薪酬": {
+					"account_number": "2211.01"
+				},
+				"应付社保费-单位": {
+					"account_number": "2211.02"
+				}
+			},
+			"应交税费": {
+				"account_number": "2221",
+				"应交增值税": {
+					"account_number": "2221.01",
+					"进项税额": {
+						"account_number": "2221.01.01"
+					},
+					"销项税额": {
+						"account_number": "2221.01.02"
+					},
+					"出口退税": {
+						"account_number": "2221.01.03"
+					},
+					"进项税额转出": {
+						"account_number": "2221.01.04"
+					},
+					"已交税金": {
+						"account_number": "2221.01.05"
+					}
+				},
+				"应交消费税": {
+					"account_number": "2221.02"
+				},
+				"应交营业税": {
+					"account_number": "2221.03"
+				},
+				"应交资源税": {
+					"account_number": "2221.04"
+				},
+				"应交所得税": {
+					"account_number": "2221.05"
+				},
+				"应交土地增值税": {
+					"account_number": "2221.06"
+				},
+				"应交城市维护建设税": {
+					"account_number": "2221.07"
+				},
+				"应交房产税": {
+					"account_number": "2221.08"
+				},
+				"应交土地使用税": {
+					"account_number": "2221.09"
+				},
+				"应交车船使用税": {
+					"account_number": "2221.10"
+				},
+				"应交教育费附加": {
+					"account_number": "2221.11"
+				},
+				"应交矿产资源补偿费": {
+					"account_number": "2221.12"
+				},
+				"代扣个人所得税": {
+					"account_number": "2221.13"
+				}
+			},
+			"应付利息": {
+				"account_number": "2231"
+			},
+			"应付股利": {
+				"account_number": "2232"
+			},
+			"其他应付款": {
+				"account_number": "2241",
+				"客户往来": {
+					"account_number": "2241.01"
+				},
+				"供应商往来": {
+					"account_number": "2241.02"
+				},
+				"员工往来": {
+					"account_number": "2241.03"
+				},
+				"统支款": {
+					"account_number": "2241.04"
+				},
+				"水电其他应付款": {
+					"account_number": "2241.06"
+				}
+			},
+			"持有待售负债": {
+				"account_number": "2245"
+			},
+			"代理业务负债": {
+				"account_number": "2314"
+			}
+		},
+		"非流动负债": {
+			"account_number": "PRE04",
+			"root_type": "Liability",
+			"递延收益": {
+				"account_number": "2401"
+			},
+			"长期借款": {
+				"account_number": "2501"
+			},
+			"应付债券": {
+				"account_number": "2502"
+			},
+			"租赁负债": {
+				"account_number": "2601"
+			},
+			"租赁付款额": {
+				"account_number": "2601.01"
+			},
+			"未确认融资费用": {
+				"account_number": "2601.02"
+			},
+			"长期应付款": {
+				"account_number": "2701"
+			},
+			"专项应付款": {
+				"account_number": "2711"
+			},
+			"预计负债": {
+				"account_number": "2801"
+			},
+			"递延所得税负债": {
+				"account_number": "2901"
+			}
+		},
+		"共同": {
+			"account_number": "PRE05",
+			"root_type": "Equity",
+			"衍生工具": {
+				"account_number": "3101"
+			},
+			"套期工具": {
+				"account_number": "3201"
+			},
+			"被套期项目": {
+				"account_number": "3202"
+			}
+		},
+		"所有者权益": {
+			"account_number": "PRE06",
+			"root_type": "Equity",
+			"实收资本": {
+				"account_number": "4001"
+			},
+			"资本公积": {
+				"account_number": "4002"
+			},
+			"其他综合收益": {
+				"account_number": "4003"
+			},
+			"盈余公积": {
+				"account_number": "4101"
+			},
+			"本年利润": {
+				"account_number": "4103"
+			},
+			"利润分配": {
+				"account_number": "4104"
+			},
+			"库存股": {
+				"account_number": "4201"
+			},
+			"专项储备": {
+				"account_number": "4301"
+			},
+			"其他权益工具": {
+				"account_number": "4401"
+			}
+		},
+		"成本": {
+			"account_number": "PRE07",
+			"root_type": "Expense",
+			"生产成本": {
+				"account_number": "5001",
+				"生产成本_直接材料": {
+					"account_number": "5001.01"
+				},
+				"生产成本_直接人工": {
+					"account_number": "5001.02"
+				},
+				"生产成本_制造费用": {
+					"account_number": "5001.03"
+				}
+			},
+			"制造费用": {
+				"account_number": "5101",
+				"制造费用_工资": {
+					"account_number": "5101.01"
+				},
+				"制造费用_水费": {
+					"account_number": "5101.02"
+				},
+				"制造费用_电费": {
+					"account_number": "5101.03"
+				},
+				"制造费用_机物料消耗": {
+					"account_number": "5101.04"
+				},
+				"制造费用_折旧费": {
+					"account_number": "5101.05"
+				}
+			},
+			"劳务成本": {
+				"account_number": "5201"
+			},
+			"研发支出": {
+				"account_number": "5301"
+			}
+		},
+		"营业收入": {
+			"account_number": "PRE08",
+			"root_type": "Income",
+			"主营业务收入": {
+				"account_number": "6001"
+			}
+		},
+		"营业成本及税金": {
+			"account_number": "PRE09",
+			"root_type": "Income",
+			"主营业务成本": {
+				"account_number": "6401"
+			},
+			"税金及附加": {
+				"account_number": "6403",
+				"印花税": {
+					"account_number": "6403.01"
+				}
+			}
+		},
+		"期间费用": {
+			"account_number": "PRE10",
+			"root_type": "Expense",
+			"销售费用": {
+				"account_number": "6601"
+			},
+			"管理费用": {
+				"account_number": "6602",
+				"办公费用": {
+					"account_number": "6602.01"
+				},
+				"清洁费用": {
+					"account_number": "6602.1"
+				},
+				"检测费用": {
+					"account_number": "6602.11"
+				},
+				"研发费用": {
+					"account_number": "6602.02"
+				},
+				"服务费用": {
+					"account_number": "6602.03"
+				},
+				"薪酬费用": {
+					"account_number": "6602.04"
+				},
+				"社保费用-单位": {
+					"account_number": "6602.05"
+				},
+				"装修费用": {
+					"account_number": "6602.06"
+				},
+				"折旧费用": {
+					"account_number": "6602.07"
+				},
+				"专利费用": {
+					"account_number": "6602.08"
+				},
+				"水电费用": {
+					"account_number": "6602.09"
+				}
+			},
+			"财务费用": {
+				"account_number": "6603",
+				"利息支出": {
+					"account_number": "6603.01"
+				},
+				"利息收入": {
+					"account_number": "6603.02"
+				},
+				"汇兑损益": {
+					"account_number": "6603.03"
+				},
+				"手续费": {
+					"account_number": "6603.04"
+				},
+				"现金折扣": {
+					"account_number": "6603.05"
+				},
+				"其他": {
+					"account_number": "6603.06"
+				},
+				"固定资产": {
+					"account_number": "6603.07"
+				}
+			},
+			"勘探费用": {
+				"account_number": "6604"
+			}
+		},
+		"其他收益": {
+			"account_number": "PRE11",
+			"root_type": "Income",
+			"其他业务收入": {
+				"account_number": "6051"
+			},
+			"公允价值变动损益": {
+				"account_number": "6101"
+			},
+			"投资收益": {
+				"account_number": "6111"
+			},
+			"资产处置损益": {
+				"account_number": "6115"
+			},
+			"其他收益": {
+				"account_number": "6117"
+			},
+			"净敞口套期损益": {
+				"account_number": "6118"
+			},
+			"营业外收入": {
+				"account_number": "6301"
+			}
+		},
+		"其他损失": {
+			"account_number": "PRE12",
+			"root_type": "Income",
+			"其他业务支出": {
+				"account_number": "6402"
+			},
+			"资产减值损失": {
+				"account_number": "6701"
+			},
+			"信用减值损失": {
+				"account_number": "6702"
+			},
+			"营业外支出": {
+				"account_number": "6711"
+			}
+		},
+		"以前年度损益调整": {
+			"account_number": "PRE13",
+			"root_type": "Income",
+			"以前年度损益调整": {
+				"account_number": "6901"
+			}
+		},
+		"所得税": {
+			"account_number": "PRE14",
+			"root_type": "Income",
+			"所得税费用": {
+				"account_number": "6801"
+			}
+		}
+	}
+}
