@@ -112,10 +112,23 @@ def get_entries(filters):
 	for method_name in frappe.get_hooks("get_entries_for_bank_reconciliation_statement"):
 		entries += frappe.get_attr(method_name)(filters) or []
 
-	return sorted(
-		entries,
-		key=lambda k: get_datetime(k["posting_datetime"]) if k["posting_datetime"] else getdate(k["posting_date"]),
-	)
+	sortByPostingDatetime = True
+	for entry in entries:
+		if "posting_datetime" not in entry:
+			sortByPostingDatetime = False
+			break
+
+	if sortByPostingDatetime:
+		return sorted(
+			entries,
+			key=lambda k: get_datetime(k["posting_datetime"]),
+		)
+	else:
+		return sorted(
+			entries,
+			key=lambda k: getdate(k["posting_date"]),
+		)
+
 
 
 def get_entries_for_bank_reconciliation_statement(filters):
