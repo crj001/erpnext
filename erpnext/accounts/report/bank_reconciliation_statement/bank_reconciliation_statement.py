@@ -4,7 +4,7 @@
 
 import frappe
 from frappe import _
-from frappe.utils import flt, getdate
+from frappe.utils import flt, getdate, get_datetime
 
 from erpnext.accounts.utils import get_balance_on
 
@@ -114,7 +114,7 @@ def get_entries(filters):
 
 	return sorted(
 		entries,
-		key=lambda k: getdate(k["posting_date"]),
+		key=lambda k: get_datetime(k["posting_datetime"]) if k["posting_datetime"] else getdate(k["posting_date"]),
 	)
 
 
@@ -131,44 +131,85 @@ def get_entries_for_bank_reconciliation_statement(filters):
 
 
 def get_journal_entries(filters):
-	return frappe.db.sql(
-		"""
-		select "Journal Entry" as payment_document, jv.posting_date,
-			jv.name as payment_entry, jvd.debit_in_account_currency as debit,
-			jvd.credit_in_account_currency as credit, jvd.against_account,
-			jv.cheque_no as reference_no, jv.cheque_date as ref_date, jv.clearance_date, jvd.account_currency
-		from
-			`tabJournal Entry Account` jvd, `tabJournal Entry` jv
-		where jvd.parent = jv.name and jv.docstatus=1
-			and jvd.account = %(account)s and jv.posting_date <= %(report_date)s
-			and ifnull(jv.clearance_date, '4000-01-01') > %(report_date)s
-			and ifnull(jv.is_opening, 'No') = 'No'
-			and jv.company = %(company)s """,
-		filters,
-		as_dict=1,
-	)
+	if frappe.get_meta("Journal Entry").has_field("custom_custom_posting_datetime") :
+		return frappe.db.sql(
+			"""
+			select "Journal Entry" as payment_document, jv.posting_date, 
+				jv.custom_custom_posting_datetime as posting_datetime,
+				jv.name as payment_entry, jvd.debit_in_account_currency as debit,
+				jvd.credit_in_account_currency as credit, jvd.against_account,
+				jv.cheque_no as reference_no, jv.cheque_date as ref_date, jv.clearance_date, jvd.account_currency
+			from
+				`tabJournal Entry Account` jvd, `tabJournal Entry` jv
+			where jvd.parent = jv.name and jv.docstatus=1
+				and jvd.account = %(account)s and jv.posting_date <= %(report_date)s
+				and ifnull(jv.clearance_date, '4000-01-01') > %(report_date)s
+				and ifnull(jv.is_opening, 'No') = 'No'
+				and jv.company = %(company)s """,
+			filters,
+			as_dict=1,
+		)
+	else :
+		return frappe.db.sql(
+			"""
+			select "Journal Entry" as payment_document, jv.posting_date,
+				jv.name as payment_entry, jvd.debit_in_account_currency as debit,
+				jvd.credit_in_account_currency as credit, jvd.against_account,
+				jv.cheque_no as reference_no, jv.cheque_date as ref_date, jv.clearance_date, jvd.account_currency
+			from
+				`tabJournal Entry Account` jvd, `tabJournal Entry` jv
+			where jvd.parent = jv.name and jv.docstatus=1
+				and jvd.account = %(account)s and jv.posting_date <= %(report_date)s
+				and ifnull(jv.clearance_date, '4000-01-01') > %(report_date)s
+				and ifnull(jv.is_opening, 'No') = 'No'
+				and jv.company = %(company)s """,
+			filters,
+			as_dict=1,
+		)
 
 
 def get_payment_entries(filters):
-	return frappe.db.sql(
-		"""
-		select
-			"Payment Entry" as payment_document, name as payment_entry,
-			reference_no, reference_date as ref_date,
-			if(paid_to=%(account)s, received_amount_after_tax, 0) as debit,
-			if(paid_from=%(account)s, paid_amount_after_tax, 0) as credit,
-			posting_date, ifnull(party,if(paid_from=%(account)s,paid_to,paid_from)) as against_account, clearance_date,
-			if(paid_to=%(account)s, paid_to_account_currency, paid_from_account_currency) as account_currency
-		from `tabPayment Entry`
-		where
-			(paid_from=%(account)s or paid_to=%(account)s) and docstatus=1
-			and posting_date <= %(report_date)s
-			and ifnull(clearance_date, '4000-01-01') > %(report_date)s
-			and company = %(company)s
-	""",
-		filters,
-		as_dict=1,
-	)
+	if frappe.get_meta("Payment Entry").has_field("custom_custom_posting_datetime") :
+		return frappe.db.sql(
+			"""
+			select
+				"Payment Entry" as payment_document, name as payment_entry,
+				reference_no, reference_date as ref_date,
+				if(paid_to=%(account)s, received_amount_after_tax, 0) as debit,
+				if(paid_from=%(account)s, paid_amount_after_tax, 0) as credit,
+				posting_date, ifnull(party,if(paid_from=%(account)s,paid_to,paid_from)) as against_account, clearance_date,
+				custom_custom_posting_datetime as posting_datetime,
+				if(paid_to=%(account)s, paid_to_account_currency, paid_from_account_currency) as account_currency
+			from `tabPayment Entry`
+			where
+				(paid_from=%(account)s or paid_to=%(account)s) and docstatus=1
+				and posting_date <= %(report_date)s
+				and ifnull(clearance_date, '4000-01-01') > %(report_date)s
+				and company = %(company)s
+		""",
+			filters,
+			as_dict=1,
+		)
+	else :
+		return frappe.db.sql(
+			"""
+			select
+				"Payment Entry" as payment_document, name as payment_entry,
+				reference_no, reference_date as ref_date,
+				if(paid_to=%(account)s, received_amount_after_tax, 0) as debit,
+				if(paid_from=%(account)s, paid_amount_after_tax, 0) as credit,
+				posting_date, ifnull(party,if(paid_from=%(account)s,paid_to,paid_from)) as against_account, clearance_date,
+				if(paid_to=%(account)s, paid_to_account_currency, paid_from_account_currency) as account_currency
+			from `tabPayment Entry`
+			where
+				(paid_from=%(account)s or paid_to=%(account)s) and docstatus=1
+				and posting_date <= %(report_date)s
+				and ifnull(clearance_date, '4000-01-01') > %(report_date)s
+				and company = %(company)s
+		""",
+			filters,
+			as_dict=1,
+		)
 
 
 def get_pos_entries(filters):
