@@ -3820,7 +3820,7 @@ def validate_and_delete_children(parent, data, ordered_item=None) -> bool:
 
 
 @frappe.whitelist()
-def update_child_qty_rate(parent_doctype, trans_items, parent_doctype_name, child_docname="items"):
+def update_child_qty_rate(parent_doctype, trans_items, parent_doctype_name, child_docname="items", apply_discount_on=None, additional_discount_percentage=None, discount_amount=None):
 	from erpnext.buying.doctype.supplier_quotation.supplier_quotation import get_purchased_items
 	from erpnext.selling.doctype.quotation.quotation import get_ordered_items
 
@@ -4125,6 +4125,10 @@ def update_child_qty_rate(parent_doctype, trans_items, parent_doctype_name, chil
 			child_item.save(ignore_permissions=True)
 
 	parent.reload()
+	if parent_doctype == "Purchase Order":
+		parent.apply_discount_on = apply_discount_on
+		parent.additional_discount_percentage = flt(additional_discount_percentage)
+		parent.discount_amount = flt(discount_amount)
 	parent.flags.ignore_validate_update_after_submit = True
 	parent.set_qty_as_per_stock_uom()
 	parent.calculate_taxes_and_totals()

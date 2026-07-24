@@ -851,24 +851,71 @@ erpnext.utils.update_child_items = function (opts) {
 		);
 	}
 
+	const dialogFields = [
+		{
+			fieldname: "trans_items",
+			fieldtype: "Table",
+			label: "Items",
+			cannot_add_rows: cannot_add_row,
+			in_place_edit: false,
+			reqd: 1,
+			data: this.data,
+			get_data: () => {
+				return this.data;
+			},
+			fields: fields,
+		}
+	]
+
+	var last_additional_discount_percentage = 0;
+	var last_discount_amount = 0;
+	if (frm.doc.doctype == "Purchase Order") {
+		last_additional_discount_percentage = frm.doc.additional_discount_percentage;
+		last_discount_amount = frm.doc.discount_amount;
+		dialogFields.push(
+			{
+				fieldtype: "Select",
+				fieldname: "trans_apply_discount_on",
+				label: "Apply Additional Discount On",
+				options: "\nGrand Total\nNet Total",
+				default: frm.doc.apply_discount_on,
+			},
+			{
+				fieldtype: "Float",
+				fieldname: "trans_additional_discount_percentage",
+				label: "Additional Discount Percentage",
+				default: frm.doc.additional_discount_percentage,
+				onchange: function () {
+					if (dialog.get_value("trans_additional_discount_percentage") == last_additional_discount_percentage) {
+						return;
+					}
+					last_additional_discount_percentage = dialog.get_value("trans_additional_discount_percentage");
+					last_discount_amount = flt(dialog.get_value("trans_additional_discount_percentage")) * flt(frm.doc.total) / 100;
+					dialog.get_field("trans_discount_amount").set_input(last_discount_amount);
+				},
+			},
+			{
+				fieldtype: "Currency",
+				fieldname: "trans_discount_amount",
+				label: "Additional Discount Amount",
+				options: "currency",
+				default: frm.doc.discount_amount,
+				onchange: function () {
+					if (dialog.get_value("trans_discount_amount") == last_discount_amount) {
+						return;
+					}
+					last_discount_amount = dialog.get_value("trans_discount_amount");
+					last_additional_discount_percentage = 0;
+					dialog.get_field("trans_additional_discount_percentage").set_input(0);
+				},
+			}
+		);
+	}
+
 	let dialog = new frappe.ui.Dialog({
 		title: __("Update Items"),
 		size: "extra-large",
-		fields: [
-			{
-				fieldname: "trans_items",
-				fieldtype: "Table",
-				label: "Items",
-				cannot_add_rows: cannot_add_row,
-				in_place_edit: false,
-				reqd: 1,
-				data: this.data,
-				get_data: () => {
-					return this.data;
-				},
-				fields: fields,
-			},
-		],
+		fields: dialogFields,
 		primary_action: function () {
 			if (frm.doctype == "Sales Order" && has_reserved_stock && frm.doc.is_subcontracted == 0) {
 				this.hide();
@@ -892,6 +939,9 @@ erpnext.utils.update_child_items = function (opts) {
 					trans_items: trans_items,
 					parent_doctype_name: frm.doc.name,
 					child_docname: child_docname,
+					apply_discount_on: dialog.get_value("trans_apply_discount_on"),
+					additional_discount_percentage: dialog.get_value("trans_additional_discount_percentage"),
+					discount_amount: dialog.get_value("trans_discount_amount"),
 				},
 				callback: function () {
 					frm.reload_doc();
