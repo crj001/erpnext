@@ -625,6 +625,7 @@ erpnext.utils.update_child_items = function (opts) {
 			fg_item: d.fg_item,
 			fg_item_qty: d.fg_item_qty,
 			description: d.description,
+			project: d.project,
 		};
 	});
 
@@ -849,6 +850,27 @@ erpnext.utils.update_child_items = function (opts) {
 				precision: get_precision("fg_item_qty"),
 			}
 		);
+	}
+
+	if (frm.doc.doctype == "Purchase Order") {
+		fields.push(
+			{
+				fieldtype: "Link",
+				fieldname: "project",
+				options: "Project",
+				in_list_view: 1,
+				read_only: 0,
+				disabled: 0,
+				label: __("Project"),
+				get_query: function () {
+					return {
+						filters: {
+							status: ["not in", "Completed, Cancelled"],
+						},
+					};
+				}
+			}
+		)
 	}
 
 	const dialogFields = [

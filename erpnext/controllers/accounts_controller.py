@@ -3987,6 +3987,7 @@ def update_child_qty_rate(parent_doctype, trans_items, parent_doctype_name, chil
 				flt(d.get("conversion_factor")),
 			)
 			prev_uom, new_uom = child_item.get("uom"), d.get("uom")
+			prev_project, new_project = child_item.get("project"), d.get("project")
 
 			if parent_doctype == "Sales Order":
 				prev_date, new_date = child_item.get("delivery_date"), d.get("delivery_date")
@@ -3999,6 +4000,7 @@ def update_child_qty_rate(parent_doctype, trans_items, parent_doctype_name, chil
 			qty_unchanged = prev_qty == new_qty
 			fg_qty_unchanged = prev_fg_qty == new_fg_qty
 			uom_unchanged = prev_uom == new_uom
+			project_unchanged = prev_project == new_project
 			conversion_factor_unchanged = prev_con_fac == new_con_fac
 			any_conversion_factor_changed |= not conversion_factor_unchanged
 			date_unchanged = (
@@ -4014,6 +4016,7 @@ def update_child_qty_rate(parent_doctype, trans_items, parent_doctype_name, chil
 				and uom_unchanged
 				and date_unchanged
 				and description_unchanged
+				and project_unchanged
 			):
 				continue
 
@@ -4038,6 +4041,7 @@ def update_child_qty_rate(parent_doctype, trans_items, parent_doctype_name, chil
 
 		child_item.qty = flt(d.get("qty"))
 		child_item.description = d.get("description")
+		child_item.project = d.get("project")
 		rate_precision = child_item.precision("rate") or 2
 		conv_fac_precision = child_item.precision("conversion_factor") or 2
 		qty_precision = child_item.precision("qty") or 2
